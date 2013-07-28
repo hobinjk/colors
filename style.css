@@ -1,0 +1,32 @@
+
+html, body {
+  font-family: 'Droid Sans Mono', sans-serif;
+  font-size: 8px;
+  line-height: 8px;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+#container {
+  background: black;
+  min-height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+span {
+  white-space: nowrap;
+  display: inline-block;
+  padding: 0px;
+  margin: 0px;
+}
+
+#hint {
+  position: absolute;
+  font-size: 24px;
+  top: 50%;
+  margin-top: -0.5em;
+  width: 100%;
+  text-align: center;
+  color: white;
+}
