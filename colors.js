@@ -31,45 +31,51 @@ function displayFile(file) {
   var reader = new FileReader();
   container.innerHTML = "";
   reader.onload = function(e) {
-    var arrayBuffer = new Uint8Array(e.target.result);
+    arrayBuffer = new Uint8Array(e.target.result);
     console.log("about to create spans for "+arrayBuffer.byteLength+" bytes");
-    if(multiple == 3) {
-      //8 8 8
-      for(var i = 0; i < arrayBuffer.byteLength/3-1; i++) {
-        var r = arrayBuffer[i*3+0].toString(16);
-        if(r.length < 2) r = "0"+r;
-        var g = arrayBuffer[i*3+1].toString(16);
-        if(g.length < 2) g = "0"+g;
-        var b = arrayBuffer[i*3+2].toString(16);
-        if(b.length < 2) b = "0"+b;
-        var span = document.createElement("span");
-        span.style.color = "#"+r+g+b;
-        span.textContent = r+g+b;
-        container.appendChild(span);
-      }
-    } else if(multiple == 2) {
-      //5 6 5
-      for(var i = 0; i < arrayBuffer.byteLength/2-1; i++) {
-        var data = (arrayBuffer[i*2+0] << 8) | arrayBuffer[i*2+1];
-        var r = ((data >> 11)*8).toString(16);
-        var g = (((data >> 5) & 63)*4).toString(16);
-        var b = ((data & 31)*8).toString(16);
-
-        if(r.length < 2) r = "0"+r;
-        if(g.length < 2) g = "0"+g;
-        if(b.length < 2) b = "0"+b;
-
-        data = data.toString(16);
-        while(data.length < 4) data = "0"+data;
-        var span = document.createElement("span");
-        span.style.color = "#"+r+g+b;
-        span.textContent = data;
-        container.appendChild(span);
-      }
-    }
-    container.style.width = document.documentElement.clientWidth+"px";
+    displayFileTick();
   };
   reader.readAsArrayBuffer(file);
+}
+var index = 0;
+var arrayBuffer;
+function displayFileTick() {
+  var i = index;
+  //for(var i = index; i < arrayBuffer.byteLength-multiple; i += multiple) {
+    var r, g, b;
+    var span = document.createElement("span");
+
+    if(multiple == 3) {
+      //8 8 8
+      r = arrayBuffer[i+0].toString(16);
+      if(r.length < 2) r = "0"+r;
+      g = arrayBuffer[i+1].toString(16);
+      if(g.length < 2) g = "0"+g;
+      b = arrayBuffer[i+2].toString(16);
+      if(b.length < 2) b = "0"+b;
+      span.textContent = r+g+b;
+    } else {
+      //5 6 5
+      var data = (arrayBuffer[i+0] << 8) | arrayBuffer[i+1];
+      r = ((data >> 11)*8).toString(16);
+      g = (((data >> 5) & 63)*4).toString(16);
+      b = ((data & 31)*8).toString(16);
+
+      data = data.toString(16);
+      while(data.length < 4) data = "0"+data;
+      span.textContent = data;
+    }
+    if(r.length < 2) r = "0"+r;
+    if(g.length < 2) g = "0"+g;
+    if(b.length < 2) b = "0"+b;
+    span.style.color = "#"+r+g+b;
+    container.appendChild(span);
+  //}
+  index += multiple;
+  if(index + multiple < arrayBuffer.byteLength)
+    requestAnimationFrame(displayFileTick);
+  else
+    container.style.width = document.documentElement.clientWidth+"px";
 }
 
 })();
